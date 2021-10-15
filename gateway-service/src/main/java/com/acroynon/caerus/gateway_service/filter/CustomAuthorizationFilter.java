@@ -1,7 +1,6 @@
 package com.acroynon.caerus.gateway_service.filter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,17 +18,18 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
+import com.acroynon.caerus.gateway_service.util.JwtUtil;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+@Slf4j @RequiredArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
+	private final JwtUtil jwtUtil;
+	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
@@ -39,16 +39,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 			String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 			if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 				try {
-					String token = authorizationHeader.substring("Bearer ".length());
-					Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-					JWTVerifier verifier = JWT.require(algorithm).build();
-					DecodedJWT decodedJWT = verifier.verify(token);
+					String token = authorizationHeader.substring("Bearer ".length());					
+					DecodedJWT decodedJWT = jwtUtil.verifyToken(token);
 					String username = decodedJWT.getSubject();
-					String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
-					Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-					for(String role : roles) {
-						authorities.add(new SimpleGrantedAuthority(role));
-					}
+					Collection<SimpleGrantedAuthority> authorities = jwtUtil.authoritiesFromToken(decodedJWT);
 					UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
 					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 					filterChain.doFilter(request, response);

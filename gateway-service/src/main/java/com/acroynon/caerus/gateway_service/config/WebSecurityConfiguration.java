@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.acroynon.caerus.gateway_service.filter.CustomAuthenticationFilter;
 import com.acroynon.caerus.gateway_service.filter.CustomAuthorizationFilter;
+import com.acroynon.caerus.gateway_service.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +23,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	private final UserDetailsService userDetailsService;
 	private final PasswordEncoder passwordEncoder;
+	private final JwtUtil jwtUtil;
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -38,8 +40,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.and().authorizeRequests().antMatchers("/user").hasRole("USER")
 		.and().authorizeRequests().antMatchers("/admin").hasRole("ADMIN");
 		
-		http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-		http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
+		http.addFilterBefore(new CustomAuthorizationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+		http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean(), jwtUtil));
 	}
 	
 	@Bean @Override
