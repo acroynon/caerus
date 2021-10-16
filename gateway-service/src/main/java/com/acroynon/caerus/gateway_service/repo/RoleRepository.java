@@ -12,5 +12,6 @@ import com.acroynon.caerus.gateway_service.model.Role;
 public interface RoleRepository extends CrudRepository<Role, UUID> {
 
 	Optional<Role> findByName(String name);	
+	boolean existsByName(String name);
 	
 }

@@ -12,5 +12,6 @@ import com.acroynon.caerus.gateway_service.model.User;
 public interface UserRepository extends CrudRepository<User, UUID> {
 
 	Optional<User> findByUsername(String username);
+	boolean existsByUsername(String username);
 	
 }
