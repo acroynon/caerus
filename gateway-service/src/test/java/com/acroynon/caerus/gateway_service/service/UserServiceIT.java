@@ -8,7 +8,6 @@ import javax.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +19,6 @@ import com.acroynon.caerus.gateway_service.repo.RoleRepository;
 import com.acroynon.caerus.gateway_service.repo.UserRepository;
 
 @SpringBootTest 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserServiceIT {
 
 	private UserService userService;

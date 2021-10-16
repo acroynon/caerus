@@ -27,7 +27,7 @@ public class JwtUtil {
 	
 	public JwtUtil() {
 		algorithm = Algorithm.HMAC256("secret".getBytes());
-		JWT.require(algorithm).build();
+		verifier = JWT.require(algorithm).build();
 	}
 	
 	public String createToken(String subject, String issuer, List<String> claim, int expirationMins) {

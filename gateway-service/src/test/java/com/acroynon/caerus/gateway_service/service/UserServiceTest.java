@@ -9,7 +9,6 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,7 +36,6 @@ class UserServiceTest {
 	@InjectMocks
 	private UserService userService;
 
-	@DisplayName("loadUserByUsername: Username doesn't exist")
 	@Test
 	void test_loadUserByUsername_notFound() {
 		// Given
@@ -53,7 +51,6 @@ class UserServiceTest {
 		verifyNoMoreInteractions();
 	}
 
-	@DisplayName("loadUserByUsername: user exists")
 	@Test
 	void test_loadUserByUsername_userExists() {
 		// Given
@@ -82,7 +79,6 @@ class UserServiceTest {
 		verifyNoMoreInteractions();
 	}
 
-	@DisplayName("createNewUser: duplicate username")
 	@Test
 	void test_createNewUser_duplicateUsername() {
 		// Given
@@ -99,7 +95,6 @@ class UserServiceTest {
 		verifyNoMoreInteractions();
 	}
 
-	@DisplayName("createNewUser: success")
 	@Test
 	void test_createNewUser_success() {
 		// Given
@@ -120,7 +115,6 @@ class UserServiceTest {
 		verifyNoMoreInteractions();
 	}
 
-	@DisplayName("giveUserRole: user doesn't exist")
 	@Test
 	void test_giveUserRole_userNotExist() {
 		// Given
@@ -138,7 +132,6 @@ class UserServiceTest {
 		verifyNoMoreInteractions();		
 	}
 
-	@DisplayName("giveUserRole: role doesn't exist")
 	@Test
 	void test_giveUserRole_roleNotExist() {
 		// Given
@@ -159,7 +152,6 @@ class UserServiceTest {
 		verifyNoMoreInteractions();	
 	}
 
-	@DisplayName("giveUserRole: success")
 	@Test
 	void test_giveUserRole_success() {
 		// Given
