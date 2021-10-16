@@ -9,6 +9,7 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.acroynon.caerus.gateway_service.model.Role;
 import com.acroynon.caerus.gateway_service.model.User;
@@ -32,6 +34,9 @@ class UserServiceTest {
 
 	@Mock
 	private RoleRepository roleRepository;
+	
+	@Mock
+	private PasswordEncoder passwordEncoder;
 
 	@InjectMocks
 	private UserService userService;
@@ -103,6 +108,7 @@ class UserServiceTest {
 		User expected = new User(null, username, password, new ArrayList<>());
 		Mockito.when(userRepository.existsByUsername(Mockito.eq(username))).thenReturn(false);
 		Mockito.when(userRepository.save(Mockito.eq(expected))).thenReturn(expected);
+		setupPasswordEncoder();
 
 		// When
 		User actual = userService.createNewUser(username, password);
@@ -181,6 +187,11 @@ class UserServiceTest {
 	private void verifyNoMoreInteractions() {
 		Mockito.verifyNoMoreInteractions(userRepository);
 		Mockito.verifyNoMoreInteractions(roleRepository);
+	}
+	
+	private void setupPasswordEncoder() {
+		Mockito.when(passwordEncoder.encode(Mockito.anyString()))
+			.then(invocation -> invocation.getArgument(0).toString());
 	}
 
 }
