@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.acroynon.caerus.gateway_service.model.Role;
 import com.acroynon.caerus.gateway_service.repo.RoleRepository;
 
 @SpringBootTest 
+@Transactional
 public class RoleServiceIT {
 
 	private final RoleService roleService;
