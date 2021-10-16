@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.acroynon.caerus.gateway_service.model.Role;
 import com.acroynon.caerus.gateway_service.model.User;
@@ -26,7 +27,7 @@ public class UserService implements UserDetailsService {
 	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;
 
-	@Override
+	@Override @Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepository.findByUsername(username).orElseThrow(() -> {
 			return new UsernameNotFoundException("Username not found");
@@ -39,6 +40,7 @@ public class UserService implements UserDetailsService {
 				authorities);
 	}
 
+	@Transactional(readOnly = false)
 	public User createNewUser(String username, String password) throws EntityExistsException {
 		if (userRepository.existsByUsername(username)) {
 			throw new EntityExistsException(String.format("Username (%s) already exists ", username));
@@ -49,6 +51,7 @@ public class UserService implements UserDetailsService {
 		return userRepository.save(user);
 	}
 
+	@Transactional(readOnly = false)
 	public User giveUserRole(String username, String roleName) throws EntityNotFoundException {
 		Role role = roleRepository.findByName(roleName)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Role (%s) not found", roleName)));
