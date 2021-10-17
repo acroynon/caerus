@@ -41,6 +41,11 @@ public class UserService implements UserDetailsService {
 		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
 				authorities);
 	}
+	
+	@Transactional(readOnly = true)
+	public boolean existsByUsername(String username) {
+		return userRepository.existsByUsername(username);
+	}
 
 	@Transactional(readOnly = false)
 	public User createNewUser(String username, String password) throws EntityExistsException {
@@ -59,7 +64,9 @@ public class UserService implements UserDetailsService {
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Role (%s) not found", roleName)));
 		User user = userRepository.findByUsername(username)
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Username (%s) not found", username)));
-		user.getRoles().add(role);
+		if(!user.getRoles().contains(role)){
+			user.getRoles().add(role);	
+		}
 		return userRepository.save(user);
 	}
 

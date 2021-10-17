@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.acroynon.caerus.gateway_service.filter.CustomAuthenticationFilter;
 import com.acroynon.caerus.gateway_service.filter.CustomAuthorizationFilter;
+import com.acroynon.caerus.gateway_service.service.UserService;
 import com.acroynon.caerus.gateway_service.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.and().authorizeRequests().antMatchers("/admin").hasRole("ADMIN");
 		
 		http.addFilterBefore(new CustomAuthorizationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-		http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean(), jwtUtil));
+		http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean(), jwtUtil, (UserService) userDetailsService, passwordEncoder));
 	}
 	
 	@Bean @Override

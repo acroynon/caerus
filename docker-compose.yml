@@ -3,16 +3,28 @@ services:
   gateway-service:
     build: 
       context: ./gateway-service
+    container_name: gateway-service
     ports:
       - "8080:8080"
     networks:
       - backend
     depends_on:
-      - db
-  db:
-    image: postgres
+      - database
+  status-service:
+    build:
+      context: ./status-service
+    container_name: status-service
     ports:
-      - "5432"
+      - "8081:8081"
+    networks:
+      - backend
+    depends_on:
+      - database
+  database:
+    image: postgres
+    container_name: database
+    ports:
+      - "5432:5432"
     networks:
       - backend
     environment:

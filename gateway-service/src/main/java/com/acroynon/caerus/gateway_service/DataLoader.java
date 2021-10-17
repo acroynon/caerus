@@ -2,7 +2,6 @@ package com.acroynon.caerus.gateway_service;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.acroynon.caerus.gateway_service.service.RoleService;
@@ -15,23 +14,34 @@ public class DataLoader {
 
 	private final UserService userService;
 	private final RoleService roleService;
-	private final PasswordEncoder passwordEncoder;
 	
 	@PostConstruct
 	public void setupTestData() {
-		roleService.createNewRole("ROLE_USER");
-		roleService.createNewRole("ROLE_ADMIN");
+		createRoleIfNotExists("ROLE_USER");
+		createRoleIfNotExists("ROLE_ADMIN");
 		
-		userService.createNewUser("adam", passwordEncoder.encode("123"));
-		userService.createNewUser("bob", passwordEncoder.encode("456"));
-		userService.createNewUser("charlie", passwordEncoder.encode("789"));
+		if(!userService.existsByUsername("adam")) {
+			userService.createNewUser("adam", "123");
+			userService.giveUserRole("adam", "ROLE_USER");
+			userService.giveUserRole("adam", "ROLE_ADMIN");
+		}
 		
-		userService.giveUserRole("adam", "ROLE_USER");
-		userService.giveUserRole("adam", "ROLE_ADMIN");
-		userService.giveUserRole("bob", "ROLE_USER");
-		userService.giveUserRole("charlie", "ROLE_ADMIN");
+		if(!userService.existsByUsername("bob")) {
+			userService.createNewUser("bob", "456");
+			userService.giveUserRole("bob", "ROLE_USER");			
+		}
 		
+		if(!userService.existsByUsername("charlie")) {
+			userService.createNewUser("charlie", "789");
+			userService.giveUserRole("charlie", "ROLE_ADMIN");			
+		}
 		
+	}
+	
+	private void createRoleIfNotExists(String name) {
+		if(!roleService.existsByName(name)) {
+			roleService.createNewRole(name);
+		}
 	}
 	
 }

@@ -23,4 +23,9 @@ public class RoleService {
 		return roleRepository.save(new Role(null, name));
 	}
 	
+	@Transactional(readOnly = true)
+	public boolean existsByName(String name){
+		return roleRepository.existsByName(name);
+	}
+	
 }
