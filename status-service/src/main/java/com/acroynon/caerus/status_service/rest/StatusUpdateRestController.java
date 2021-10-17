@@ -18,9 +18,8 @@ import com.acroynon.caerus.status_service.model.StatusUpdate;
 import com.acroynon.caerus.status_service.service.StatusUpdateService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@RestController @RequiredArgsConstructor @Slf4j
+@RestController @RequiredArgsConstructor
 public class StatusUpdateRestController {
 
 	private final StatusUpdateService statusService;

@@ -12,7 +12,7 @@ import com.acroynon.caerus.status_service.model.StatusUpdate;
 @Repository
 public interface StatusUpdateRepository extends PagingAndSortingRepository<StatusUpdate, UUID>{
 
-	Page<StatusUpdate> findAll(Pageable pageable);
+	Page<StatusUpdate> findAllByOrderByCreationDateDesc(Pageable pageable);
 	
 	void deleteById(UUID id);
 	

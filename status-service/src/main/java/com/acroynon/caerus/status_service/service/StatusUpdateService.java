@@ -23,7 +23,7 @@ public class StatusUpdateService {
 	private final StatusUpdateRepository statusRepo;
 	
 	public Page<StatusUpdate> findAll(Pageable pageable){
-		return statusRepo.findAll(pageable);
+		return statusRepo.findAllByOrderByCreationDateDesc(pageable);
 	}
 	
 	public StatusUpdate createNew(UUID author_id, String content) throws IllegalArgumentException {
