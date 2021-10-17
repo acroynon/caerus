@@ -10,12 +10,20 @@ services:
       - backend
     depends_on:
       - database
+  eureka-service:
+    build:
+      context: ./eureka-service
+    container_name: eureka-service
+    ports:
+      - "8761:8761"
+    networks:
+      - backend
   status-service:
     build:
       context: ./status-service
     container_name: status-service
     ports:
-      - "8081:8081"
+      - "8081"
     networks:
       - backend
     depends_on:
@@ -24,7 +32,7 @@ services:
     image: postgres
     container_name: database
     ports:
-      - "5432:5432"
+      - "5432"
     networks:
       - backend
     environment:
