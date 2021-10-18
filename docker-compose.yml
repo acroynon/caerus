@@ -1,15 +1,5 @@
 version: "3"
 services:
-  gateway-service:
-    build: 
-      context: ./gateway-service
-    container_name: gateway-service
-    ports:
-      - "8080:8080"
-    networks:
-      - backend
-    depends_on:
-      - database
   eureka-service:
     build:
       context: ./eureka-service
@@ -18,12 +8,30 @@ services:
       - "8761:8761"
     networks:
       - backend
+  gateway-service:
+    build: 
+      context: ./gateway-service
+    container_name: gateway-service
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+  auth-service:
+    build:
+      context: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8081"
+    networks:
+      - backend
+    depends_on:
+      - database
   status-service:
     build:
       context: ./status-service
     container_name: status-service
     ports:
-      - "8081"
+      - "8082"
     networks:
       - backend
     depends_on:

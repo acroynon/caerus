@@ -20,8 +20,9 @@
 
 	<!-- sub modules -->
 	<modules>
-        <module>gateway-service</module>
         <module>eureka-service</module>
+        <module>gateway-service</module>
+        <module>auth-service</module>
         <module>status-service</module>
     </modules>
 	
