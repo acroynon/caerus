@@ -12,9 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.acroynon.caerus.gateway_service.filter.CustomAuthenticationFilter;
 import com.acroynon.caerus.gateway_service.filter.CustomAuthorizationFilter;
-import com.acroynon.caerus.gateway_service.service.UserService;
 import com.acroynon.caerus.gateway_service.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -34,20 +32,24 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable();
+		http.httpBasic().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		
+		http.authorizeRequests().antMatchers("/authenticate", "/register").anonymous()
+		.and().authorizeRequests().antMatchers("/refresh").authenticated();
+
+		// TODO: testing end-points, should be removed
 		http.authorizeRequests().antMatchers("/any").permitAll()
-		.and().authorizeRequests().antMatchers("/login").anonymous()
 		.and().authorizeRequests().antMatchers("/user", "/status").hasRole("USER")
 		.and().authorizeRequests().antMatchers("/admin").hasRole("ADMIN");
 		
+		
 		http.addFilterBefore(new CustomAuthorizationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-		http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean(), jwtUtil, (UserService) userDetailsService, passwordEncoder));
 	}
 	
 	@Bean @Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
-
+	
 }
