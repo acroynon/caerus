@@ -2,24 +2,25 @@ package com.acroynon.caerus.gateway_service.rest;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.acroynon.caerus.gateway_service.model.User;
+import com.acroynon.caerus.gateway_service.service.UserService;
 import com.acroynon.caerus.gateway_service.util.JwtUtil;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,46 +28,61 @@ import lombok.extern.slf4j.Slf4j;
 @RestController @RequiredArgsConstructor @Slf4j
 public class AuthController {
 	
+	private final UserService userService;
 	private final AuthenticationManager authenticationManager;
 	private final JwtUtil jwtUtil;
 
 	@PostMapping("/register")
-	public void register() {
-		
+	public ResponseEntity<?> register(String username, String password, String confirm_password) {
+		Map<String, String> map = new HashMap<>();
+		if(username.length() < 3 || password.length() < 3 || !password.equals(confirm_password)) {
+			map.put("error", "Invalid Credentials");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+		}else {
+			if(userService.existsByUsername(username)){
+				map.put("error", "Username already exists");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+			}else {
+				User user = userService.createNewUser(username, password);
+				return ResponseEntity.status(HttpStatus.CREATED).body(user);
+			}
+		}
 	}
 	
 	@PostMapping("/authenticate")
-	public void authenticate(HttpServletRequest request, HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException {
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
+	public ResponseEntity<Map<String, String>> authenticate(String username, String password) throws JsonGenerationException, JsonMappingException, IOException {
 		log.info("Attempting authentication {}:{}", username, password);
 		
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
 				password);
 		Authentication authentication= authenticationManager.authenticate(authenticationToken);
 		if(authentication.isAuthenticated()) {
-			User user = (User) authentication.getPrincipal();
-			String issuer = request.getRequestURI().toString();
-			String accessToken = jwtUtil.createToken(user.getUsername(), issuer, jwtUtil.authoritiesToRoles(user.getAuthorities()), 10);
-			String refreshToken = jwtUtil.createToken(user.getUsername(), issuer, jwtUtil.authoritiesToRoles(user.getAuthorities()), 30);
-			Map<String, String> tokens = new HashMap<>();
-			tokens.put("access_token", accessToken);
-			tokens.put("refresh_token", refreshToken);
-			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-			new ObjectMapper().writeValue(response.getOutputStream(), tokens);	
+			org.springframework.security.core.userdetails.User springUser = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+			User appUser = userService.loadByUsername(springUser.getUsername());
+			
+			Map<String, String> tokens = jwtUtil.generateTokenPair(username, appUser.getUuid(), jwtUtil.authoritiesToRoles(springUser.getAuthorities()));
+			return ResponseEntity.status(HttpStatus.OK).body(tokens);	
 		}else {
-			response.setHeader("error", "Invalid Credentials");
-			response.setStatus(HttpStatus.FORBIDDEN.value());
 			Map<String, String> error = new HashMap<>();
 			error.put("error", "Invalid Credetials");
-			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-			new ObjectMapper().writeValue(response.getOutputStream(), error);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
 		}
 	}
 	
 	@PostMapping("/refresh")
-	public void refresh() {
-		
+	public ResponseEntity<?> refresh(String refresh_token) {
+		try {
+			DecodedJWT decoded = jwtUtil.verifyToken(refresh_token);
+			String username = decoded.getSubject();
+			List<String> roles = decoded.getClaim("roles").asList(String.class);
+			UUID uuid = decoded.getClaim("uuid").as(UUID.class);
+			Map<String, String> tokens = jwtUtil.generateTokenPair(username, uuid, roles);
+			return ResponseEntity.status(HttpStatus.OK).body(tokens);
+		} catch(JWTVerificationException e) {
+			Map<String, String> error = new HashMap<>();
+			error.put("error", e.getMessage());
+			return ResponseEntity.status(HttpStatus.OK).body(error);
+		}	
 	}
 	
 }

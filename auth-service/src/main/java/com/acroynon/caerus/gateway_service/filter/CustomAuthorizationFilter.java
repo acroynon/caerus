@@ -1,8 +1,10 @@
 package com.acroynon.caerus.gateway_service.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.FilterChain;
@@ -28,12 +30,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j @RequiredArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
+	private List<String> skipPaths = Arrays.asList("/authenticate", "/register");
+	
 	private final JwtUtil jwtUtil;
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		if(request.getServletPath().equals("/login")) {
+		if(skipPaths.contains(request.getServletPath())) {
 			filterChain.doFilter(request, response);
 		}else {
 			String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);

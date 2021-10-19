@@ -34,17 +34,16 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.csrf().disable();
 		http.httpBasic().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.addFilterBefore(new CustomAuthorizationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 		
-		http.authorizeRequests().antMatchers("/authenticate", "/register").anonymous()
-		.and().authorizeRequests().antMatchers("/refresh").authenticated();
+		http.authorizeRequests().antMatchers("/authenticate", "/register", "/refresh").anonymous();
 
 		// TODO: testing end-points, should be removed
 		http.authorizeRequests().antMatchers("/any").permitAll()
 		.and().authorizeRequests().antMatchers("/user", "/status").hasRole("USER")
 		.and().authorizeRequests().antMatchers("/admin").hasRole("ADMIN");
-		
-		
-		http.addFilterBefore(new CustomAuthorizationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+		http.authorizeRequests().anyRequest().anonymous();
 	}
 	
 	@Bean @Override

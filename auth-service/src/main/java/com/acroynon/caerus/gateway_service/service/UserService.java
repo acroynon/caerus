@@ -43,6 +43,13 @@ public class UserService implements UserDetailsService {
 	}
 	
 	@Transactional(readOnly = true)
+	public User loadByUsername(String username) throws UsernameNotFoundException{
+		return userRepository.findByUsername(username).orElseThrow(() -> {
+			return new UsernameNotFoundException("Username not found");
+		});
+	}
+	
+	@Transactional(readOnly = true)
 	public boolean existsByUsername(String username) {
 		return userRepository.existsByUsername(username);
 	}
