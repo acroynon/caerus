@@ -33,7 +33,7 @@ public class AuthController {
 	private final JwtUtil jwtUtil;
 
 	@PostMapping("/register")
-	public ResponseEntity<?> register(String username, String password, String confirm_password) {
+	public ResponseEntity<Map<String, String>> register(String username, String password, String confirm_password) {
 		Map<String, String> map = new HashMap<>();
 		if(username.length() < 3 || password.length() < 3 || !password.equals(confirm_password)) {
 			map.put("error", "Invalid Credentials");
@@ -44,7 +44,10 @@ public class AuthController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
 			}else {
 				User user = userService.createNewUser(username, password);
-				return ResponseEntity.status(HttpStatus.CREATED).body(user);
+				map.put("uuid", user.getUuid().toString());
+				map.put("username", username);
+				map.put("password", password);
+				return ResponseEntity.status(HttpStatus.CREATED).body(map);
 			}
 		}
 	}
