@@ -1,7 +1,8 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import Navigation from './components/Navigation'
 import Home from './views/Home'
+import Profile from './views/Profile'
 import Login from './views/Login'
 import Register from './views/Register'
 
@@ -12,6 +13,9 @@ function App() {
       <div>
         <Route exact path="/">
           <Home />
+        </Route>
+        <Route exact path="/profile">
+          <Profile />
         </Route>
         <Route exact path="/login">
           <Login />

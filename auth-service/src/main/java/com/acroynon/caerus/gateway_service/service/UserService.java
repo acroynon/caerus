@@ -42,7 +42,7 @@ public class UserService implements UserDetailsService {
 				authorities);
 	}
 	
-	@Transactional(readOnly = true)
+	@Transactional(readOnly = true) 
 	public User loadByUsername(String username) throws UsernameNotFoundException{
 		return userRepository.findByUsername(username).orElseThrow(() -> {
 			return new UsernameNotFoundException("Username not found");
