@@ -68,7 +68,7 @@ class TestControllerTest {
 
 	@Test
 	void test_unsecuredPage_Authenticated() throws Exception {
-		String token = createToken(username_userRole);
+		String token = getAccessToken(username_userRole, password);
 		mvc.perform(get("/any")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "Bearer " + token))
@@ -84,7 +84,7 @@ class TestControllerTest {
 
 	@Test
 	void test_userPage_AuthenticationSuccess() throws Exception {
-		String token = createToken(username_userRole);
+		String token = getAccessToken(username_userRole, password);
 		mvc.perform(get("/user")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "Bearer " + token))
@@ -93,7 +93,7 @@ class TestControllerTest {
 
 	@Test
 	void test_userPage_missingRole() throws Exception {
-		String token = createToken(username_noRole);
+		String token = getAccessToken(username_noRole, password);
 		mvc.perform(get("/user")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "Bearer " + token))
@@ -109,7 +109,7 @@ class TestControllerTest {
 	
 	@Test
 	void test_adminPage_AuthenticationSuccess() throws Exception {
-		String token = createToken(username_adminRole);
+		String token = getAccessToken(username_adminRole, password);
 		mvc.perform(get("/admin")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "Bearer " + token))
@@ -118,19 +118,19 @@ class TestControllerTest {
 
 	@Test
 	void test_adminPage_missingRole() throws Exception {
-		String token = createToken(username_userRole);
+		String token = getAccessToken(username_userRole, password);
 		mvc.perform(get("/admin")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "Bearer " + token))
 				.andExpect(status().isForbidden());		
 	}
 
-	private String createToken(String username) throws Exception {
+	private String getAccessToken(String username, String password) throws Exception {
 		MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
 		request.add("username", username);
-		request.add("password", "password");
+		request.add("password", password);
 		MvcResult result = mvc
-				.perform(post("/login").contentType(MediaType.APPLICATION_FORM_URLENCODED).params(request)).andReturn();
+				.perform(post("/authenticate").contentType(MediaType.APPLICATION_FORM_URLENCODED).params(request)).andReturn();
 		TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
 		};
 		Map<String, String> response = jsonMapper.readValue(result.getResponse().getContentAsString(), typeRef);
