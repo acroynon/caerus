@@ -12,8 +12,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.acroynon.caerus.gateway_service.dto.AuthenticateDTO;
+import com.acroynon.caerus.gateway_service.dto.RegisterDTO;
 import com.acroynon.caerus.gateway_service.model.User;
 import com.acroynon.caerus.gateway_service.service.UserService;
 import com.acroynon.caerus.gateway_service.util.JwtUtil;
@@ -33,9 +36,12 @@ public class AuthController {
 	private final JwtUtil jwtUtil;
 
 	@PostMapping("/register")
-	public ResponseEntity<Map<String, String>> register(String username, String password, String confirm_password) {
+	public ResponseEntity<Map<String, String>> register(@RequestBody RegisterDTO dto) {
+		String username = dto.getUsername();
+		String password = dto.getPassword();
+		String confirmPassword = dto.getConfirmPassword();
 		Map<String, String> map = new HashMap<>();
-		if(username.length() < 3 || password.length() < 3 || !password.equals(confirm_password)) {
+		if(username.length() < 3 || password.length() < 3 || !password.equals(confirmPassword)) {
 			map.put("error", "Invalid Credentials");
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
 		}else {
@@ -53,7 +59,9 @@ public class AuthController {
 	}
 	
 	@PostMapping("/authenticate")
-	public ResponseEntity<Map<String, String>> authenticate(String username, String password) throws JsonGenerationException, JsonMappingException, IOException {
+	public ResponseEntity<Map<String, String>> authenticate(@RequestBody AuthenticateDTO dto) throws JsonGenerationException, JsonMappingException, IOException {
+		String username = dto.getUsername();
+		String password = dto.getPassword();
 		log.info("Attempting authentication {}:{}", username, password);
 		
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
@@ -73,7 +81,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/refresh")
-	public ResponseEntity<?> refresh(String refresh_token) {
+	public ResponseEntity<?> refresh(@RequestBody String refresh_token) {
 		try {
 			DecodedJWT decoded = jwtUtil.verifyToken(refresh_token);
 			String username = decoded.getSubject();
