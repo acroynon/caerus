@@ -1,6 +1,7 @@
 version: "3"
 services:
   front-end:
+    stdin_open: true
     build:
       context: ./front-end
     container_name: front-end

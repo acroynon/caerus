@@ -1,5 +1,4 @@
 import {React, useState} from 'react';
-import { NavLink } from 'react-router-dom'
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -8,13 +7,13 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FeedIcon from '@mui/icons-material/Feed';
 import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import NavigationLink from './NavigationLink';
 
 function Navigation(){
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,22 +21,44 @@ function Navigation(){
 		{
 			text: 'Home',
 			icon: <HomeIcon />,
-			link: '/'
+			link: '/',
+			showOnAuthenticated: true,
+			showOnAnonymous: true
 		},
 		{
 			text: 'Profile',
 			icon: <AccountCircleIcon />,
-			link: '/profile'
+			link: '/profile',
+			showOnAuthenticated: true,
+			showOnAnonymous: false
+		},
+		{
+			text: 'Feed',
+			icon: <FeedIcon />,
+			link: '/feed',
+			showOnAuthenticated: true,
+			showOnAnonymous: false
 		},
 		{
 			text: 'Login',
 			icon: <LoginIcon />,
-			link: '/login'
+			link: '/login',
+			showOnAuthenticated: false,
+			showOnAnonymous: true
 		},
 		{
 			text: 'Register',
 			icon: <AppRegistrationIcon />,
-			link: '/register'
+			link: '/register',
+			showOnAuthenticated: false,
+			showOnAnonymous: true
+		},
+		{
+			text: 'Logout',
+			icon: <LogoutIcon />,
+			link: '/logout',
+			showOnAuthenticated: true,
+			showOnAnonymous: false
 		}
 	]
 
@@ -65,16 +86,21 @@ function Navigation(){
       			<List>
 		          	{links.map(link => {
 		      			return (
-			          		<ListItem button key={link.text} 
-			          			component={NavLink} 
-			          			to={link.link} 
-			          			onClick={() => setIsMenuOpen(false)}
-			          		>
-					            <ListItemIcon>
-					              {link.icon}
-					            </ListItemIcon>
-					            <ListItemText primary={link.text} />
-				          </ListItem>
+							  <NavigationLink 
+							  	key={link.link}
+							  	link={link}
+								onClick = {() => setIsMenuOpen(false)}
+							  />
+			          	// 	<ListItem button key={link.text} 
+			          	// 		component={NavLink} 
+			          	// 		to={link.link} 
+			          	// 		onClick={() => setIsMenuOpen(false)}
+			          	// 	>
+					    //         <ListItemIcon>
+					    //           {link.icon}
+					    //         </ListItemIcon>
+					    //         <ListItemText primary={link.text} />
+				        //   </ListItem>
 		      			)
 		      		})}
           		</List>

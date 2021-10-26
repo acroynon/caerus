@@ -8,16 +8,30 @@ const options = {
     }
   };
 
-class AuthService {
+class AuthService  {
     login(username, password){
         console.log(username,password)
-        return axios.post("/api/auth/authenticate", {
-            username: username,
-            password: password
-        }, options)
-        .then(response => {
-            console.log(response);
+        return new Promise((resolve, reject) => {
+            axios.post("/api/auth/authenticate", {
+                username: username,
+                password: password
+            }, options)
+            .then(response => {
+                console.log(response);
+                sessionStorage.setItem('access_token', response.access_token);
+                sessionStorage.setItem('refresh_token', response.refresh_token);
+                resolve();
+            })
         });
+    }
+
+    logout(){
+        sessionStorage.removeItem('access_token');
+        sessionStorage.removeItem('refresh_token');
+    }
+    
+    isLoggedIn(){
+        return sessionStorage.getItem('access_token') != null;
     }
 }
 

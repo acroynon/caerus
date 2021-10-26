@@ -5,15 +5,20 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import AuthService from '../service/AuthService';
+import { useHistory } from "react-router-dom";
 
 const paperStyle = {padding: '30px 20px', width: 300, margin: '20px auto'}
 
 function Login(){
+	const history = useHistory();
 	function handleLogin(e){
 		e.preventDefault();
 		console.log("Handle input");
 		var data = new FormData(e.target);
-		AuthService.login(data.get("username"), data.get("password"));
+		AuthService.login(data.get("username"), data.get("password"))
+			.then(() => {
+				history.replace("/feed");
+			})
 	}
 	return (
 		<Grid>

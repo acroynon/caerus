@@ -4,7 +4,7 @@ function Home(){
 	return (
 		<div>
 			<h2>Home Page</h2>
-			<p>Status feed will go here</p>
+			<p>Details about app will go here</p>
 		</div>
 	);
 }
