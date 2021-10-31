@@ -7,19 +7,26 @@ import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { Box } from '@mui/system';
+import StatusService from '../service/StatusService'
 
 const paperStyle = {padding: '30px 20px', width: 600, margin: '20px auto'}
 
 function Feed(){
+    function statusSubmitHandler(){
+        StatusService.postStatus("Dummy Status");
+    }
+
 	return (
         <div>
             <Grid>
                 <Paper elevation={20} style={paperStyle}>
                     <form>
-                        <Stack spacing={2}>
-                            <TextField label="Status" name="status" variant="outlined" multiline rows={2}
-                            InputProps={{endAdornment: <SendIcon/>}}/>
-                        </Stack>
+                        <Grid container spacing={2} direction="row">
+                            <Grid item xs={11}>
+                                <TextField fullWidth label="Status" name="status" variant="outlined" multiline rows={2} />
+                            </Grid>
+                            <IconButton onClick={statusSubmitHandler}><SendIcon/></IconButton>
+                        </Grid>
                     </form>
                 </Paper>
             </Grid>
