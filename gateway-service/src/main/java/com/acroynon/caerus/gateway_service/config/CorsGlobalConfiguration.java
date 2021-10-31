@@ -14,6 +14,8 @@ public class CorsGlobalConfiguration implements WebFluxConfigurer {
         corsRegistry.addMapping("/**")
           .allowedOrigins("http://localhost")
           .allowedMethods("*")
+          .allowedHeaders("*")
+          .allowCredentials(true)
           .maxAge(3600);
     }
 }

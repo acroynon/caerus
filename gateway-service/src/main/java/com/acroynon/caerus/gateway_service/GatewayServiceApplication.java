@@ -17,9 +17,13 @@ public class GatewayServiceApplication {
 	public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
 		return builder.routes()
 				.route("auth-service",
-						r -> r.path("/api/auth/**")
+						r -> r.path("/api/auth-service/**")
 								.filters(f -> f.stripPrefix(2))
 								.uri("lb://auth-service/"))
+				.route("status-service",
+						r -> r.path("/api/status-service/**")
+								.filters(f -> f.stripPrefix(2))
+								.uri("lb://status-service/"))
 				.build();
 	}
 

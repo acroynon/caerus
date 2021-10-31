@@ -66,8 +66,8 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 		return !request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION);
 	}
 	
-	private void populateRequestWithRoles(ServerWebExchange excahnge, String[] roles) {
-		excahnge.getRequest().mutate()
+	private void populateRequestWithRoles(ServerWebExchange exchange, String[] roles) {
+		exchange.getRequest().mutate()
 			.header("roles", roles)
 			.build();
 	}

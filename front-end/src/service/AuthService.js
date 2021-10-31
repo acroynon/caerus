@@ -12,7 +12,7 @@ class AuthService  {
     login(username, password){
         console.log(username,password)
         return new Promise((resolve, reject) => {
-            axios.post("/api/auth/authenticate", {
+            axios.post("/api/auth-service/authenticate", {
                 username: username,
                 password: password
             }, options)

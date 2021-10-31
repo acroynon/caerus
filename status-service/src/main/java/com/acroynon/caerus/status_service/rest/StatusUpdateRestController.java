@@ -11,9 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.acroynon.caerus.security_module.util.JwtUtil;
 import com.acroynon.caerus.status_service.model.StatusUpdate;
 import com.acroynon.caerus.status_service.service.StatusUpdateService;
 
@@ -23,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class StatusUpdateRestController {
 
 	private final StatusUpdateService statusService;
+	private final JwtUtil jwtUtil;
 	
 	@GetMapping("/status")
 	public ResponseEntity<Page<StatusUpdate>> getStatusUpdates(
@@ -33,8 +37,9 @@ public class StatusUpdateRestController {
 	}
 	
 	@PostMapping("/status")
-	public ResponseEntity<?> postStatusUpdate(@RequestParam("author_id") UUID authorId, String content){
+	public ResponseEntity<?> postStatusUpdate(@RequestHeader("Authorization") String token, @RequestBody String content){
 		try {
+			UUID authorId = jwtUtil.getUserId(token);
 			StatusUpdate update = statusService.createNew(authorId, content);
 			return ResponseEntity.ok(update);
 		}catch(IllegalArgumentException e) {
