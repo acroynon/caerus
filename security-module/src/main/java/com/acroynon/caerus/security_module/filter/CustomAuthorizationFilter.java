@@ -1,7 +1,6 @@
 package com.acroynon.caerus.security_module.filter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -30,14 +29,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j @RequiredArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
-	private List<String> skipPaths = Arrays.asList("/authenticate", "/register");
-	
+	private final List<String> unauthorisedPaths;	
 	private final JwtUtil jwtUtil;
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		if(skipPaths.contains(request.getServletPath())) {
+		if(unauthorisedPaths.contains(request.getServletPath())) {
 			filterChain.doFilter(request, response);
 		}else {
 			String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);

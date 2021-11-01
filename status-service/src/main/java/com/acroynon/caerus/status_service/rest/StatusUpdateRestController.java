@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acroynon.caerus.security_module.util.JwtUtil;
+import com.acroynon.caerus.status_service.dto.StatusUpdateCreationDTO;
 import com.acroynon.caerus.status_service.model.StatusUpdate;
 import com.acroynon.caerus.status_service.service.StatusUpdateService;
 
@@ -37,10 +38,10 @@ public class StatusUpdateRestController {
 	}
 	
 	@PostMapping("/status")
-	public ResponseEntity<?> postStatusUpdate(@RequestHeader("Authorization") String token, @RequestBody String content){
+	public ResponseEntity<?> postStatusUpdate(@RequestHeader("Authorization") String token, @RequestBody StatusUpdateCreationDTO dto){
 		try {
 			UUID authorId = jwtUtil.getUserId(token);
-			StatusUpdate update = statusService.createNew(authorId, content);
+			StatusUpdate update = statusService.createNew(authorId, dto.getContent());
 			return ResponseEntity.ok(update);
 		}catch(IllegalArgumentException e) {
 			Map<String, String> response = new HashMap<>();

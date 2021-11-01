@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,11 @@ import com.auth0.jwt.JWT;
 @Component
 public class JwtUtil extends com.acroynon.caerus.security_module.util.JwtUtil {
 	
+	@Autowired
+	public JwtUtil(@Value("${jwt.secret}") String secret) {
+		super(secret);
+	}
+
 	public Map<String, String> generateTokenPair(String username, UUID uuid, List<String> roles){
 		String accessToken = createToken(username, uuid, roles, 10);
 		String refreshToken = createToken(username, uuid, roles, 30);

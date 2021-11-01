@@ -2,8 +2,8 @@ import axios from 'axios'
 
 const options = {
     headers: {
-        // 'Access-Control-Allow-Origin' : '*',
-        // 'Access-Control-Allow-Methods':'*'
+        'Access-Control-Allow-Origin' : '*',
+        'Access-Control-Allow-Methods':'*'
     }
   };
 

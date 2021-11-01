@@ -30,7 +30,10 @@ public class StatusUpdateService {
 		if(content.length() > MAXIMUM_LENGTH) {
 			throw new IllegalArgumentException(String.format("Status is too long. Must be up to %d characters", MAXIMUM_LENGTH));
 		}
-		StatusUpdate status = new StatusUpdate(null, author_id, content, new Date());
+		StatusUpdate status = new StatusUpdate();
+		status.setAuthorGuid(author_id);
+		status.setContent(content);
+		status.setCreationDate(new Date());
 		return statusRepo.save(status);
 	}
 	

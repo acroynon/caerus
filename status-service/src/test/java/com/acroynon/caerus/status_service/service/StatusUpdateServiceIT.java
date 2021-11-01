@@ -96,7 +96,10 @@ class StatusUpdateServiceIT {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		cal.add(Calendar.MINUTE, minsAdd);
-		StatusUpdate status = new StatusUpdate(null, author_id, content, cal.getTime());
+		StatusUpdate status = new StatusUpdate();
+		status.setAuthorGuid(author_id);
+		status.setContent(content);
+		status.setCreationDate(cal.getTime());
 		return statusRepo.save(status);
 	}
 

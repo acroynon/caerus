@@ -18,8 +18,9 @@ class AuthService  {
             }, options)
             .then(response => {
                 console.log(response);
-                sessionStorage.setItem('access_token', response.access_token);
-                sessionStorage.setItem('refresh_token', response.refresh_token);
+                var data = response.data;
+                sessionStorage.setItem('access_token', data.access_token);
+                sessionStorage.setItem('refresh_token', data.refresh_token);
                 resolve();
             })
         });

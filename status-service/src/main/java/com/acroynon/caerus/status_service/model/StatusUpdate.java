@@ -27,6 +27,8 @@ public class StatusUpdate {
 	
 	private String content;
 	
+	private int numberLikes;
+	
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate;
