@@ -19,10 +19,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.acroynon.caerus.gateway_service.dto.AuthenticateDTO;
 import com.acroynon.caerus.gateway_service.service.UserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -126,11 +125,11 @@ class TestControllerTest {
 	}
 
 	private String getAccessToken(String username, String password) throws Exception {
-		MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
-		request.add("username", username);
-		request.add("password", password);
+		AuthenticateDTO dto = new AuthenticateDTO();
+		dto.setUsername(username);
+		dto.setPassword(password);
 		MvcResult result = mvc
-				.perform(post("/authenticate").contentType(MediaType.APPLICATION_FORM_URLENCODED).params(request)).andReturn();
+				.perform(post("/authenticate").contentType(MediaType.APPLICATION_JSON).content(jsonMapper.writeValueAsString(dto))).andReturn();
 		TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
 		};
 		Map<String, String> response = jsonMapper.readValue(result.getResponse().getContentAsString(), typeRef);
