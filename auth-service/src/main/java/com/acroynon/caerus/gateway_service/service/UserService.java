@@ -2,6 +2,7 @@ package com.acroynon.caerus.gateway_service.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -47,6 +48,11 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByUsername(username).orElseThrow(() -> {
 			return new UsernameNotFoundException("Username not found");
 		});
+	}
+	
+	@Transactional(readOnly = true)
+	public List<User> findByUuidIn(List<UUID> uuids){
+		return userRepository.findByUuidIn(uuids);
 	}
 	
 	@Transactional(readOnly = true)

@@ -38,13 +38,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurationBase {
 		super.configure(http, Arrays.asList("/authenticate", "/register", "/refresh"));
 		
 		http.authorizeRequests().antMatchers("/authenticate", "/register", "/refresh").anonymous();
+		http.authorizeRequests().antMatchers("/username").authenticated();
 
 		// TODO: testing end-points, should be removed
 		http.authorizeRequests().antMatchers("/any").permitAll()
 		.and().authorizeRequests().antMatchers("/user", "/status").hasRole("USER")
 		.and().authorizeRequests().antMatchers("/admin").hasRole("ADMIN");
-
-		http.authorizeRequests().anyRequest().anonymous();
 	}
 	
 	@Bean @Override

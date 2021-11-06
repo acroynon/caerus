@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.acroynon.caerus.status_service.dto.StatusUpdateDTO;
 import com.acroynon.caerus.status_service.model.StatusUpdate;
 import com.acroynon.caerus.status_service.repo.StatusUpdateRepository;
 
@@ -43,7 +44,7 @@ class StatusUpdateServiceTest {
 		Mockito.when(statusRepo.findAllByOrderByCreationDateDesc(pageable)).thenReturn(expected);
 		
 		// When
-		Page<StatusUpdate> actual = statusService.findAll(pageable);
+		Page<StatusUpdateDTO> actual = statusService.findAll("", pageable);
 		
 		// Then
 		Assertions.assertNotNull(actual);

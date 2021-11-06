@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.acroynon.caerus.status_service.dto.StatusUpdateDTO;
 import com.acroynon.caerus.status_service.model.StatusUpdate;
 import com.acroynon.caerus.status_service.repo.StatusUpdateRepository;
 
@@ -42,9 +43,9 @@ class StatusUpdateServiceIT {
 		StatusUpdate status5 = createStatusUpdate(UUID.randomUUID(), "Status5", 4);
 		
 		// When
-		Page<StatusUpdate> page1 = statusService.findAll(PageRequest.of(0, 1));
-		Page<StatusUpdate> page2 = statusService.findAll(PageRequest.of(0, 3));
-		Page<StatusUpdate> page3 = statusService.findAll(PageRequest.of(0, 5));
+		Page<StatusUpdateDTO> page1 = statusService.findAll("", PageRequest.of(0, 1));
+		Page<StatusUpdateDTO> page2 = statusService.findAll("", PageRequest.of(0, 3));
+		Page<StatusUpdateDTO> page3 = statusService.findAll("", PageRequest.of(0, 5));
 		
 		// Then
 		Assertions.assertEquals(status5, page1.getContent().get(0));
@@ -79,9 +80,9 @@ class StatusUpdateServiceIT {
 		StatusUpdate status5 = createStatusUpdate(UUID.randomUUID(), "Status5", 4);
 		
 		// When
-		Page<StatusUpdate> page1 = statusService.findAll(PageRequest.of(0, 2));
-		Page<StatusUpdate> page2 = statusService.findAll(PageRequest.of(1, 2));
-		Page<StatusUpdate> page3 = statusService.findAll(PageRequest.of(2, 2));
+		Page<StatusUpdateDTO> page1 = statusService.findAll("", PageRequest.of(0, 2));
+		Page<StatusUpdateDTO> page2 = statusService.findAll("", PageRequest.of(1, 2));
+		Page<StatusUpdateDTO> page3 = statusService.findAll("", PageRequest.of(2, 2));
 		
 		// Then
 		Assertions.assertEquals(status5, page1.getContent().get(0));

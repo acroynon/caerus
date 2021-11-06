@@ -17,7 +17,7 @@ function Login(){
 		var data = new FormData(e.target);
 		AuthService.login(data.get("username"), data.get("password"))
 			.then(() => {
-				history.replace("/feed");
+				history.replace("/");
 			})
 	}
 	return (

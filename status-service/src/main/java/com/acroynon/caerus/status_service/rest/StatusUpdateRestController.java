@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acroynon.caerus.security_module.util.JwtUtil;
 import com.acroynon.caerus.status_service.dto.StatusUpdateCreationDTO;
+import com.acroynon.caerus.status_service.dto.StatusUpdateDTO;
 import com.acroynon.caerus.status_service.model.StatusUpdate;
 import com.acroynon.caerus.status_service.service.StatusUpdateService;
 
@@ -30,11 +31,12 @@ public class StatusUpdateRestController {
 	private final JwtUtil jwtUtil;
 	
 	@GetMapping("/status")
-	public ResponseEntity<Page<StatusUpdate>> getStatusUpdates(
+	public ResponseEntity<Page<StatusUpdateDTO>> getStatusUpdates(
+				@RequestHeader (name="Authorization") String token,
 				@RequestParam(defaultValue = "0") int page,
 				@RequestParam(defaultValue = "10") int size){
-		Pageable paging = PageRequest.of(page, size);
-		return ResponseEntity.ok(statusService.findAll(paging));
+		Pageable paging = PageRequest.of(page, size);		
+		return ResponseEntity.ok(statusService.findAll(token, paging));
 	}
 	
 	@PostMapping("/status")
