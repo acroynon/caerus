@@ -3,7 +3,6 @@ import { Route } from 'react-router-dom';
 import Navigation from './components/Navigation'
 import Home from './views/Home'
 import Profile from './views/Profile'
-import Feed from './views/Feed'
 import Login from './views/Login'
 import Register from './views/Register'
 import Logout from './views/Logout'
@@ -19,8 +18,8 @@ function App() {
         <Route exact path="/profile">
           <Profile />
         </Route>
-        <Route exact path="/feed">
-          <Feed />
+        <Route exact path="/discover">
+          <div>Feed Page</div>
         </Route>
         <Route exact path="/login">
           <Login />

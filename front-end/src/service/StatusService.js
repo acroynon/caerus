@@ -21,10 +21,7 @@ class StatusService  {
     }
 
     getStatusFeed(){
-        axios.get("/api/status-service/status")
-        .then(response => {
-            console.log(response);
-        });
+        return axios.get("/api/status-service/status");
     }
 
     likeStatus(statusId){

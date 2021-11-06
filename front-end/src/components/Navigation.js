@@ -9,7 +9,7 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import FeedIcon from '@mui/icons-material/Feed';
+import SearchIcon from '@mui/icons-material/Search';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
@@ -23,7 +23,7 @@ function Navigation(){
 			icon: <HomeIcon />,
 			link: '/',
 			showOnAuthenticated: true,
-			showOnAnonymous: true
+			showOnAnonymous: false
 		},
 		{
 			text: 'Profile',
@@ -33,9 +33,9 @@ function Navigation(){
 			showOnAnonymous: false
 		},
 		{
-			text: 'Feed',
-			icon: <FeedIcon />,
-			link: '/feed',
+			text: 'Discover',
+			icon: <SearchIcon />,
+			link: '/discover',
 			showOnAuthenticated: true,
 			showOnAnonymous: false
 		},
@@ -91,16 +91,6 @@ function Navigation(){
 							  	link={link}
 								onClick = {() => setIsMenuOpen(false)}
 							  />
-			          	// 	<ListItem button key={link.text} 
-			          	// 		component={NavLink} 
-			          	// 		to={link.link} 
-			          	// 		onClick={() => setIsMenuOpen(false)}
-			          	// 	>
-					    //         <ListItemIcon>
-					    //           {link.icon}
-					    //         </ListItemIcon>
-					    //         <ListItemText primary={link.text} />
-				        //   </ListItem>
 		      			)
 		      		})}
           		</List>
