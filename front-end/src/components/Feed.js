@@ -1,11 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid'
-import Paper from '@mui/material/Paper'
-import Stack from '@mui/material/Stack';
-import IconButton from '@mui/material/IconButton';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import { Box } from '@mui/system';
 import StatusService from '../service/StatusService'
+import StatusUpdate from './StatusUpdate';
 
 const paperStyle = {padding: '30px 20px', width: 600, margin: '20px auto'}
 
@@ -25,19 +21,9 @@ function Feed(){
 
 	return (
         <Grid>
-            {statusUpdates.map(update => {
+            {statusUpdates.map(status => {
                 return (
-                    <Paper elevation={20} style={paperStyle} key={update.guid}>
-                        <Stack spacing={2}>
-                            <div>{update.content}</div>
-                            <Box style={{textAlign:'right'}}>
-                                <IconButton aria-label="like">
-                                    <ThumbUpIcon />
-                                </IconButton>
-                                <div>Posted by: {update.authorUsername} @ {update.creationDate}</div>
-                            </Box>
-                        </Stack>
-                    </Paper>
+                    <StatusUpdate  key={status.guid} status={status}/>
                 );
             })}
         </Grid>
