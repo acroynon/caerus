@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.acroynon.caerus.security_module.util.JwtUtil;
 import com.acroynon.caerus.status_service.dto.StatusUpdateDTO;
 import com.acroynon.caerus.status_service.model.StatusUpdate;
 import com.acroynon.caerus.status_service.repo.StatusUpdateRepository;
@@ -27,6 +28,12 @@ class StatusUpdateServiceTest {
 	
 	@Mock
 	private StatusUpdateRepository statusRepo;
+	
+	@Mock
+	private UsernameService usernameService;
+	
+	@Mock
+	private JwtUtil jwtUtil;
 	
 	@InjectMocks
 	private StatusUpdateService statusService;

@@ -9,23 +9,32 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.acroynon.caerus.status_service.model.StatusUpdate;
+import com.acroynon.caerus.security_module.util.JwtTestUtils;
+import com.acroynon.caerus.status_service.dto.StatusUpdateCreationDTO;
+import com.acroynon.caerus.status_service.dto.StatusUpdateDTO;
+import com.acroynon.caerus.status_service.dto.UsernameUuidPair;
 import com.acroynon.caerus.status_service.service.StatusUpdateService;
+import com.acroynon.caerus.status_service.service.UsernameService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.google.common.net.HttpHeaders;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Transactional
@@ -34,30 +43,57 @@ class StatusUpdateRestControllerTest {
 	private MockMvc mvc;
 	private JsonMapper jsonMapper;
 	private StatusUpdateService statusService;
+	private UsernameService usernameService;
+	@Mock
+	private RestTemplate restTemplate;
+	private UUID fakeUserUUID;
+	private String fakeUsername;
+	private JwtTestUtils jwtTestUtils;
 	
 	@Autowired
-	public StatusUpdateRestControllerTest(WebApplicationContext context, StatusUpdateService statusService) {
+	public StatusUpdateRestControllerTest(WebApplicationContext context, StatusUpdateService statusService, UsernameService usernameService) {
 		mvc = MockMvcBuilders.webAppContextSetup(context).build();
 		this.statusService = statusService;
+		this.usernameService = usernameService;
+		jwtTestUtils = new JwtTestUtils("secret");
 		jsonMapper = new JsonMapper();
+	}
+	
+	@BeforeEach
+	void mockAuthServiceResponse() {
+		ReflectionTestUtils.setField(usernameService, "restTemplate", restTemplate);
+		fakeUserUUID = UUID.randomUUID();
+		fakeUsername = "user";
+		UsernameUuidPair[] pairs = new UsernameUuidPair[1];
+		pairs[0] = new UsernameUuidPair();
+		pairs[0].setUuid(fakeUserUUID);
+		pairs[0].setUsername(fakeUsername);
+		Mockito.when(restTemplate.postForObject(
+						Mockito.eq("http://auth-service/username"),
+						Mockito.any(HttpEntity.class), 
+						Mockito.eq(UsernameUuidPair[].class)))
+				.thenReturn(pairs);
 	}
 	
 	@Test
 	void test_getStatusUpdates() throws Exception {
 		// Given
-		StatusUpdate status1 = statusService.createNew(UUID.randomUUID(), "status1");
-		StatusUpdate status2 = statusService.createNew(UUID.randomUUID(), "status2");
-		StatusUpdate status3 = statusService.createNew(UUID.randomUUID(), "status3");
-		StatusUpdate status4 = statusService.createNew(UUID.randomUUID(), "status4");
-		StatusUpdate status5 = statusService.createNew(UUID.randomUUID(), "status5");
+		String fakeToken = jwtTestUtils.createTestToken(fakeUsername, fakeUserUUID, "user");
+		StatusUpdateDTO status1 = statusService.createNew(fakeToken, "status1");
+		StatusUpdateDTO status2 = statusService.createNew(fakeToken, "status2");
+		StatusUpdateDTO status3 = statusService.createNew(fakeToken, "status3");
+		StatusUpdateDTO status4 = statusService.createNew(fakeToken, "status4");
+		StatusUpdateDTO status5 = statusService.createNew(fakeToken, "status5");
 		
 		// When
 		MvcResult result = mvc.perform(get("/status?page=0&size=5")
-				.contentType(MediaType.APPLICATION_JSON)).andReturn();
+					.contentType(MediaType.APPLICATION_JSON)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + fakeToken))
+					.andReturn();
 		TypeReference<Map<String, Object>> mapRef = new TypeReference<>() {};
-		TypeReference<List<StatusUpdate>> listRef = new TypeReference<>() {};
+		TypeReference<List<StatusUpdateDTO>> listRef = new TypeReference<>() {};
 		Map<String, Object> response = jsonMapper.readValue(result.getResponse().getContentAsString(), mapRef);
-		List<StatusUpdate> updates = jsonMapper.readValue(jsonMapper.writeValueAsBytes(response.get("content")), listRef);
+		List<StatusUpdateDTO> updates = jsonMapper.readValue(jsonMapper.writeValueAsBytes(response.get("content")), listRef);
 		
 		// Then
 		Assertions.assertEquals(5, updates.size());
@@ -71,21 +107,21 @@ class StatusUpdateRestControllerTest {
 	@Test
 	void test_postStatusUpdate() throws Exception {
 		// Given 
-		UUID authorId = UUID.randomUUID();
 		String content = "Hello World";
-		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add("author_id", authorId.toString());
-		map.add("content", content);
+		StatusUpdateCreationDTO dto = new StatusUpdateCreationDTO();
+		dto.setContent(content);
 		
 		// When
 		MvcResult result = mvc.perform(post("/status")
 				.contentType(MediaType.APPLICATION_JSON)
-				.params(map)).andExpect(status().isOk())
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtTestUtils.createTestToken(fakeUsername, fakeUserUUID, "user"))
+				.content(jsonMapper.writeValueAsString(dto)))
+				.andExpect(status().isOk())
 				.andReturn();
-		StatusUpdate update = jsonMapper.readValue(result.getResponse().getContentAsString(), StatusUpdate.class);
+		StatusUpdateDTO update = jsonMapper.readValue(result.getResponse().getContentAsString(), StatusUpdateDTO.class);
 		
 		// Then
-		Assertions.assertEquals(authorId, update.getAuthorGuid());
+		Assertions.assertEquals(fakeUsername, update.getAuthorUsername());
 		Assertions.assertEquals(content, update.getContent());
 	}
 

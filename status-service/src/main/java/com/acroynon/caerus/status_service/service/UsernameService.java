@@ -18,13 +18,13 @@ import lombok.RequiredArgsConstructor;
 public class UsernameService {
 	
 	private final RestTemplate restTemplate;
-
+	
 	public Map<UUID, String> getUsernameUuidMap(String token, List<UUID> uuids){
 		Map<UUID, String> usernameMap = new HashMap<>();
 		HttpHeaders headers = new HttpHeaders() {
 			private static final long serialVersionUID = 583050783803710144L;
 			{
-		        set("Authorization", token); 
+		        set("Authorization", "Bearer " + token); 
 		    }
 		};
 	    HttpEntity<List<UUID>> httpEntity = new HttpEntity<List<UUID>>(uuids, headers);
@@ -32,6 +32,7 @@ public class UsernameService {
 				.postForObject("http://auth-service/username",
 						httpEntity, 
 						UsernameUuidPair[].class);
+		System.out.println(pairs);
 		for(UsernameUuidPair pair : pairs) {
 			usernameMap.put(pair.getUuid(), pair.getUsername());
 		}

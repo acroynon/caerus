@@ -27,8 +27,14 @@ public class JwtUtil {
 		return verifier.verify(token);
 	}
 	
+	public String getUsername(String token) {
+		token = stripBearer(token);
+		DecodedJWT decoded = verifyToken(token);
+		return decoded.getSubject();
+	}
+	
 	public UUID getUserId(String token) throws JWTVerificationException {
-		token = token.substring("Bearer ".length());
+		token = stripBearer(token);
 		DecodedJWT decoded = verifyToken(token);
 		return decoded.getClaim("uuid").as(UUID.class);
 	}
@@ -40,6 +46,13 @@ public class JwtUtil {
 			authorities.add(new SimpleGrantedAuthority(role));
 		}
 		return authorities;
+	}
+	
+	private String stripBearer(String token) {
+		if(token.startsWith("Bearer ")) {
+			return token.substring("Bearer ".length());
+		}
+		return token;
 	}
 	
 }

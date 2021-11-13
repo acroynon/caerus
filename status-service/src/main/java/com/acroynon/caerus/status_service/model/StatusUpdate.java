@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class StatusUpdate {
 
 	@Id @GeneratedValue
-	private UUID guid;
+	private UUID uuid;
 	
 	private UUID authorGuid;
 	

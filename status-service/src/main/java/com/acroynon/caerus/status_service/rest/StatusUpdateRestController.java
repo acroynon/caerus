@@ -2,7 +2,6 @@ package com.acroynon.caerus.status_service.rest;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,11 +15,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.acroynon.caerus.security_module.util.JwtUtil;
 import com.acroynon.caerus.status_service.dto.StatusUpdateCreationDTO;
 import com.acroynon.caerus.status_service.dto.StatusUpdateDTO;
-import com.acroynon.caerus.status_service.model.StatusUpdate;
 import com.acroynon.caerus.status_service.service.StatusUpdateService;
+import com.google.common.net.HttpHeaders;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,11 +26,10 @@ import lombok.RequiredArgsConstructor;
 public class StatusUpdateRestController {
 
 	private final StatusUpdateService statusService;
-	private final JwtUtil jwtUtil;
 	
 	@GetMapping("/status")
 	public ResponseEntity<Page<StatusUpdateDTO>> getStatusUpdates(
-				@RequestHeader (name="Authorization") String token,
+				@RequestHeader (name=HttpHeaders.AUTHORIZATION) String token,
 				@RequestParam(defaultValue = "0") int page,
 				@RequestParam(defaultValue = "10") int size){
 		Pageable paging = PageRequest.of(page, size);		
@@ -40,10 +37,9 @@ public class StatusUpdateRestController {
 	}
 	
 	@PostMapping("/status")
-	public ResponseEntity<?> postStatusUpdate(@RequestHeader("Authorization") String token, @RequestBody StatusUpdateCreationDTO dto){
+	public ResponseEntity<?> postStatusUpdate(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody StatusUpdateCreationDTO dto){
 		try {
-			UUID authorId = jwtUtil.getUserId(token);
-			StatusUpdate update = statusService.createNew(authorId, dto.getContent());
+			StatusUpdateDTO update = statusService.createNew(token, dto.getContent());
 			return ResponseEntity.ok(update);
 		}catch(IllegalArgumentException e) {
 			Map<String, String> response = new HashMap<>();
