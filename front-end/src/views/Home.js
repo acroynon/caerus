@@ -30,7 +30,6 @@ function Home(){
     function refreshFeed(){
         StatusService.getStatusFeed()
             .then(response => {
-                console.log(response);
                 setStatusFeed(response.data.content);
             })
     }

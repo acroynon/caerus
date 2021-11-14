@@ -6,9 +6,9 @@ function Feed(props){
     let feed = props.feed;
     return (
         <Grid>
-            {feed.map(status => {
+            {feed.map((status, i) => {
                 return (
-                    <StatusUpdate  key={status.guid} status={status}/>
+                    <StatusUpdate key={i} status={status}/>
                 );
             })}
         </Grid>

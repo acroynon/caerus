@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom'
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import AuthService from '../service/AuthService';
+import { AuthedContext } from '../context/AuthedContext';
 
 function NavigationLink(props){
     var link = props.link;
-    var isAuthenticated = AuthService.isLoggedIn();
+    const {isAuthenticated} = useContext(AuthedContext);
 
     if((isAuthenticated && link.showOnAuthenticated)
         || (!isAuthenticated && link.showOnAnonymous)){

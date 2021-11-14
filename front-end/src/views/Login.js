@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useContext } from 'react';
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack';
@@ -6,18 +6,22 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import AuthService from '../service/AuthService';
 import { useHistory } from "react-router-dom";
+import { AuthedContext } from '../context/AuthedContext';
 
 const paperStyle = {padding: '30px 20px', width: 300, margin: '20px auto'}
 
 function Login(){
 	const history = useHistory();
+    const {setIsAuthenticated} = useContext(AuthedContext);
+
 	function handleLogin(e){
 		e.preventDefault();
 		console.log("Handle input");
 		var data = new FormData(e.target);
 		AuthService.login(data.get("username"), data.get("password"))
 			.then(() => {
-				history.replace("/");
+				setIsAuthenticated(true);
+				history.push("/")
 			})
 	}
 	return (

@@ -9,8 +9,9 @@ const options = {
   };
 
 class AuthService  {
+
     login(username, password){
-        console.log(username,password)
+        console.log("attempt login:", username, password)
         return new Promise((resolve, reject) => {
             axios.post("/api/auth-service/authenticate", {
                 username: username,
@@ -29,10 +30,6 @@ class AuthService  {
     logout(){
         sessionStorage.removeItem('access_token');
         sessionStorage.removeItem('refresh_token');
-    }
-    
-    isLoggedIn(){
-        return sessionStorage.getItem('access_token') != null;
     }
 }
 
