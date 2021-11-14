@@ -9,15 +9,9 @@ const options = {
 
 class StatusService  {
     postStatus(content){
-        axios.post('/api/status-service/status', {
+        return axios.post('/api/status-service/status', {
             content: content
         }, options)
-        .then(response => {
-            console.log("res", response);
-        })
-        .catch(err => {
-            console.log("err", err)
-        })
     }
 
     getStatusFeed(){
